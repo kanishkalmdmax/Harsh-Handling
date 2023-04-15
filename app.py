@@ -17,15 +17,38 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload():
     file = request.files['file']
-    file.save(file.filename)
     file_path = file.filename
 
-    # Load the excel file
-    df = pd.read_excel(file_path, sheet_name='Sheet1')
-    ...
+    # Check if the uploaded file is in XLSX format
+    if not file_path.endswith('.xlsx'):
+        return '''
+            <h3>Error: This is not a XLSX file</h3>
+            <p>Please download &amp; upload the file from Performance App &gt; Driver Report.</p>
+            <a href="/">Return to upload form</a>
+            '''
 
-    # Define the columns to check for values greater than 0
+    file.save(file_path)
+
+    # Load the excel file
+    try:
+        df = pd.read_excel(file_path, sheet_name='Sheet1')
+    except:
+        return '''
+            <h3>Error: This is not a valid Driver Report file</h3>
+            <p>Please download the correct file from Performance App &gt; Driver Report.</p>
+            <a href="/">Return to upload form</a>
+            '''
+
+    # Check if the uploaded file has the required columns
     cols_to_check = ['Following Distance', 'Camera Obstruction', 'U Turn', 'Driver Distraction', 'Seatbelt Compliance', 'Sign Violations', 'Hard Turn', 'Speeding Violations', 'Hard Braking', 'Hard Acceleration', 'Traffic Light Violation']
+
+
+    if not all(col in df.columns for col in cols_to_check):
+        return '''
+            <h3>Error: This is not a valid Driver Report file</h3>
+            <p>Please download the correct file from Performance App &gt; Driver Report.</p>
+            <a href="/">Return to upload form</a>
+            '''
 
     # Create a new dataframe to store the extracted data
     extracted_data = pd.DataFrame(columns=['Name', 'Violations'])
@@ -38,11 +61,10 @@ def upload():
             name = row['Name']
             # Get the headers and counts of the columns with values greater than 0
             violations = ', '.join([f'{col} ({int(row[col])})' for col in cols_to_check if row[col] > 0])
+            # Calculate the total number of violations for this row
+            violations_count = row[cols_to_check].sum()
             # Append the data to the extracted_data dataframe using pandas.concat()
-            extracted_data = pd.concat([extracted_data, pd.DataFrame({'Name': [name], 'Violations': [violations]})], ignore_index=True)
-
-    # Create a new column with the sum of all values in cols_to_check
-    extracted_data['Violations Count'] = df[cols_to_check].sum(axis=1)
+            extracted_data = pd.concat([extracted_data, pd.DataFrame({'Name': [name], 'Violations': [violations], 'Violations Count': [violations_count]})], ignore_index=False)
 
     # Write the extracted data to a new sheet in the same excel file using the openpyxl engine
     with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:
