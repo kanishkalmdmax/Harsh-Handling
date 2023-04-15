@@ -8,10 +8,31 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return '''
+        <html>
+            <head>
+                <title>Netradyne Harsh Handling E-Mail</title>
+                <style>
+                    #instructions {
+                        border: 1px solid black;
+                        padding: 10px;
+                        position: absolute;
+                        top: 50%;
+                        right: 10px;
+                        transform: translateY(-50%);
+                    }
+                </style>
+            </head>
+            <body>
         <form method="post" action="/upload" enctype="multipart/form-data">
             <input type="file" name="file">
             <input type="submit" value="Upload">
         </form>
+    '''
+                <div id="instructions">
+                    Steps:<br>(Upload Reports in the Performance App first)<br>1. Open Performance App, then select Reports and then Driver Report.<br>2. Click on the Daily button and select yesterday's date, and click Download.<br>3. Once the file is downloaded, open this URL, click on Choose File, select the file, and click Upload.<br>4. Then a new page will open with the Download button, click on that and download the file.<br>5. Open the file, it'll be the same file, with a new sheet added with the name of "Extracted Data", open that sheet.<br>6. This sheet will have the email grid, you can copy this grid and paste it in the email.
+                </div>
+            </body>
+        </html>
     '''
 
 @app.route('/upload', methods=['POST'])
