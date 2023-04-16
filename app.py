@@ -24,7 +24,7 @@ def index():
             </head>
             <body>
                 <form method="post" action="/upload" enctype="multipart/form-data">
-                    <input type="file" name="file">
+                    <input type="file" name="file" accept=".xlsx">
                     <input type="submit" value="Upload">
                 </form>
                 <div id="instructions">
@@ -112,6 +112,7 @@ def upload():
     # Save the changes to the workbook
     wb.save(file_path)
     return '''
+        <title>Netradyne Harsh Handling E-Mail</title>
         <form method="post" action="/download">
             <input type="hidden" name="file_path" value="''' + file_path + '''">
             <input type="submit" value="Download">
