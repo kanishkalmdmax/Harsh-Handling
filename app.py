@@ -41,6 +41,7 @@ def upload():
     # Check if the uploaded file is in XLSX format
     if not file_path.endswith('.xlsx'):
         return '''
+            <title>Netradyne Harsh Handling E-Mail</title>
             <h3>Error: This is not a XLSX file</h3>
             <p>Please download &amp; upload the file from Performance App &gt; Driver Report.</p>
             <a href="/">Return to upload form</a>
@@ -51,6 +52,7 @@ def upload():
         df = pd.read_excel(file_path, sheet_name='Sheet1')
     except:
         return '''
+            <title>Netradyne Harsh Handling E-Mail</title>
             <h3>Error: This is not a valid Driver Report file</h3>
             <p>Please download the correct file from Performance App &gt; Driver Report.</p>
             <a href="/">Return to upload form</a>
@@ -59,6 +61,7 @@ def upload():
     cols_to_check = ['Following Distance', 'Camera Obstruction', 'U Turn', 'Driver Distraction', 'Seatbelt Compliance', 'Sign Violations', 'Hard Turn', 'Speeding Violations', 'Hard Braking', 'Hard Acceleration', 'Traffic Light Violation']
     if not all(col in df.columns for col in cols_to_check):
         return '''
+            <title>Netradyne Harsh Handling E-Mail</title>
             <h3>Error: This is not a valid Driver Report file</h3>
             <p>Please download the correct file from Performance App &gt; Driver Report.</p>
             <a href="/">Return to upload form</a>
@@ -126,4 +129,4 @@ def download():
     return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000),debug=True)
