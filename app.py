@@ -23,8 +23,9 @@ def index():
                 </style>
             </head>
             <body>
+                <h3>Netradyne Harsh Handling E-Mail Grid (Daily)</h3>
                 <form method="post" action="/upload" enctype="multipart/form-data">
-                    <input type="file" name="file" accept=".xlsx">
+                    <input type="file" name="file" accept=".xlsx"><br><br>
                     <input type="submit" value="Upload">
                 </form>
                 <div id="instructions">
@@ -116,6 +117,8 @@ def upload():
     wb.save(file_path)
     return '''
         <title>Netradyne Harsh Handling E-Mail</title>
+        <h3>Netradyne Harsh Handling E-Mail Grid (Daily)</h3>
+        <p>File processed successfully!</p>
         <form method="post" action="/download">
             <input type="hidden" name="file_path" value="''' + file_path + '''">
             <input type="submit" value="Download">
